@@ -14,6 +14,7 @@ export interface LeadData {
 }
 
 export async function createHubSpotLead(leadData: LeadData): Promise<any> {
+  // Use only basic properties that exist by default in all HubSpot portals
   const hubspotProperties = {
     firstname: leadData.firstName,
     lastname: leadData.lastName,
@@ -24,15 +25,7 @@ export async function createHubSpotLead(leadData: LeadData): Promise<any> {
     country: leadData.country,
     industry: leadData.industry,
     lifecyclestage: 'lead',
-    lead_status: 'NEW',
     hs_lead_status: 'NEW',
-    // Custom properties for business validation
-    company_size: leadData.companySize,
-    business_goals: leadData.businessGoals || '',
-    business_idea: leadData.businessIdea,
-    lead_source: leadData.source,
-    // Add timestamp for when lead was generated
-    business_validation_date: new Date().toISOString(),
   };
 
   try {
