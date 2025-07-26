@@ -307,7 +307,7 @@ export async function generatePDFReport(reportData: PDFReportData): Promise<Buff
 
   try {
     // Use html-pdf-node for PDF generation
-    const htmlPdf = require('html-pdf-node');
+    const { default: htmlPdf } = await import('html-pdf-node');
     
     const options = {
       format: 'A4',

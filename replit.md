@@ -17,6 +17,10 @@ BizValidator is a comprehensive business idea validation platform that provides 
 - 2025-01-26: Updated backend routes to call DeepSeek API for analysis
 - 2025-01-26: Modified ValidationReport component to display AI-generated insights
 - 2025-01-26: Added proper error handling for AI analysis failures
+- 2025-01-26: Implemented complete lead capture and PDF download system
+- 2025-01-26: Added HubSpot integration for automatic lead creation
+- 2025-01-26: Created gated access flow requiring contact details before report viewing
+- 2025-01-26: Built PDF generation service for comprehensive business validation reports
 
 ## Features
 1. **Landing Page**: Hero section with feature overview and call-to-action
