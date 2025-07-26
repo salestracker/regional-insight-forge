@@ -14,15 +14,26 @@ const Index = () => {
   const [, setLocation] = useLocation();
 
   const submitValidationMutation = useMutation({
-    mutationFn: (data: BusinessFormData) => 
-      apiRequest("/api/business-validations/quick", {
+    mutationFn: async (data: BusinessFormData) => {
+      // Create validation record immediately
+      const validation = await apiRequest("/api/business-validations/quick", {
         method: "POST",
         body: JSON.stringify(data),
-      }),
+      });
+      
+      // Start AI analysis in background (don't wait for it)
+      apiRequest(`/api/business-validations/${validation.id}/analyze`, {
+        method: "POST",
+      }).catch(error => {
+        console.error("Background AI analysis failed:", error);
+      });
+      
+      return validation;
+    },
     onSuccess: (response) => {
       toast({
-        title: "Business Details Saved",
-        description: "Please provide your contact details to access your validation report.",
+        title: "Analysis Started",
+        description: "Please provide your contact details while we generate your validation report.",
       });
       // Redirect to the gated report page immediately
       setLocation(`/report/${response.id}`);

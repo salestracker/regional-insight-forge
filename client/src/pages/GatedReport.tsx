@@ -97,10 +97,20 @@ export const GatedReport = () => {
     },
   });
 
+  // Auto-refresh every 5 seconds when analysis is pending
+  useEffect(() => {
+    if (leadData && !isAnalysisReady) {
+      const interval = setInterval(() => {
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [leadData, isAnalysisReady]);
+
   const handleLeadCapture = (capturedLeadData: LeadData) => {
     setLeadData(capturedLeadData);
-    // Trigger AI analysis after lead capture
-    analyzeValidationMutation.mutate();
+    // No need to trigger analysis here - it's already running in background
   };
 
   const handleDownload = async () => {
@@ -182,7 +192,7 @@ export const GatedReport = () => {
   }
 
   // Show beautiful loading state if lead captured but analysis not ready
-  if (leadData && !isAnalysisReady && analyzeValidationMutation.isPending) {
+  if (leadData && !isAnalysisReady) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full">
@@ -244,7 +254,10 @@ export const GatedReport = () => {
 
             <div className="mt-8 text-sm text-muted-foreground">
               <p>Hello {leadData.firstName}! This usually takes 30-60 seconds.</p>
+              <p className="mt-2">This page will automatically refresh when your report is ready.</p>
             </div>
+            
+
           </CardContent>
         </Card>
       </div>
