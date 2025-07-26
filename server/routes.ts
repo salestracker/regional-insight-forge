@@ -103,7 +103,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         leadId: hubspotLead.id,
         hubspotId: hubspotLead.hubspotId,
-        message: "Lead created successfully",
+        isNew: hubspotLead.isNew,
+        message: hubspotLead.isNew ? "Lead created successfully" : "Lead already exists - updated information",
       });
     } catch (error) {
       console.error('Lead creation error:', error);

@@ -21,6 +21,8 @@ BizValidator is a comprehensive business idea validation platform that provides 
 - 2025-01-26: Added HubSpot integration for automatic lead creation
 - 2025-01-26: Created gated access flow requiring contact details before report viewing
 - 2025-01-26: Built PDF generation service for comprehensive business validation reports
+- 2025-01-26: Added email deduplication to prevent duplicate leads in HubSpot
+- 2025-01-26: Implemented contact search functionality to check existing emails before creation
 
 ## Features
 1. **Landing Page**: Hero section with feature overview and call-to-action
