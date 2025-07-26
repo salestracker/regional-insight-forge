@@ -15,22 +15,22 @@ const Index = () => {
 
   const submitValidationMutation = useMutation({
     mutationFn: (data: BusinessFormData) => 
-      apiRequest("/api/business-validations", {
+      apiRequest("/api/business-validations/quick", {
         method: "POST",
         body: JSON.stringify(data),
       }),
     onSuccess: (response) => {
       toast({
-        title: "Analysis Complete",
-        description: "Your business validation is ready! Please provide your contact details to access the report.",
+        title: "Business Details Saved",
+        description: "Please provide your contact details to access your validation report.",
       });
-      // Redirect to the gated report page
+      // Redirect to the gated report page immediately
       setLocation(`/report/${response.id}`);
     },
     onError: (error) => {
       toast({
-        title: "Validation Failed",
-        description: "There was an error processing your business validation. Please try again.",
+        title: "Submission Failed",
+        description: "There was an error saving your business details. Please try again.",
         variant: "destructive",
       });
       console.error("Validation error:", error);

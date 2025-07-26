@@ -8,6 +8,70 @@ import { generatePDFReport } from "./services/pdfService";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Quick business validation endpoint - creates validation without AI analysis
+  app.post("/api/business-validations/quick", async (req, res) => {
+    try {
+      const validationData = insertBusinessValidationSchema.parse(req.body);
+      
+      // Create the validation record immediately without AI analysis
+      const validation = await storage.createBusinessValidation(validationData);
+      
+      res.json(validation);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid validation data", errors: error.errors });
+      } else {
+        console.error('Validation creation error:', error);
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
+  // Trigger AI analysis for a validation
+  app.post("/api/business-validations/:id/analyze", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid validation ID" });
+        return;
+      }
+
+      const validation = await storage.getBusinessValidation(id);
+      if (!validation) {
+        res.status(404).json({ message: "Validation not found" });
+        return;
+      }
+
+      // Generate AI analysis
+      try {
+        const analysis = await generateValidationReport({
+          businessIdea: validation.businessIdea,
+          targetRegion: validation.targetRegion,
+          industry: validation.industry,
+          targetAudience: validation.targetAudience,
+          budget: validation.budget
+        });
+        
+        // Update the validation with the analysis result
+        const updatedValidation = await storage.updateBusinessValidation(validation.id, {
+          analysisResult: JSON.stringify(analysis)
+        });
+        
+        res.json(updatedValidation);
+      } catch (aiError) {
+        console.error('AI analysis failed:', aiError);
+        res.status(500).json({
+          message: "Analysis failed",
+          error: "Failed to generate AI analysis. Please try again.",
+          fallback: true
+        });
+      }
+    } catch (error) {
+      console.error('Analysis trigger error:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Business validation routes
   app.post("/api/business-validations", async (req, res) => {
     try {

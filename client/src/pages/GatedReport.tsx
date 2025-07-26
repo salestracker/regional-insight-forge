@@ -79,8 +79,28 @@ export const GatedReport = () => {
     },
   });
 
+  const analyzeValidationMutation = useMutation({
+    mutationFn: () => 
+      apiRequest(`/api/business-validations/${id}/analyze`, {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      // Refetch the validation data to get the updated analysis
+      window.location.reload();
+    },
+    onError: (error) => {
+      toast({
+        title: "Analysis Failed",
+        description: "There was an error generating your business analysis. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleLeadCapture = (capturedLeadData: LeadData) => {
     setLeadData(capturedLeadData);
+    // Trigger AI analysis after lead capture
+    analyzeValidationMutation.mutate();
   };
 
   const handleDownload = async () => {
@@ -150,24 +170,106 @@ export const GatedReport = () => {
 
   // Parse the analysis result
   let analysis;
+  let isAnalysisReady = false;
   try {
     analysis = JSON.parse((validation as any).analysisResult || "{}");
     if (analysis.error || analysis.fallback) {
       throw new Error("Analysis not available");
     }
+    isAnalysisReady = true;
   } catch (parseError) {
+    // Analysis not ready yet
+  }
+
+  // Show beautiful loading state if lead captured but analysis not ready
+  if (leadData && !isAnalysisReady && analyzeValidationMutation.isPending) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Card className="max-w-2xl w-full">
+          <CardContent className="text-center py-16">
+            <div className="mb-8">
+              <div className="relative">
+                <div className="w-24 h-24 mx-auto mb-6">
+                  <svg className="w-24 h-24 animate-spin text-primary" viewBox="0 0 24 24">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeDasharray="31.416"
+                      strokeDashoffset="31.416"
+                      className="animate-pulse"
+                    >
+                      <animate
+                        attributeName="stroke-dasharray"
+                        dur="2s"
+                        values="0 31.416;15.708 15.708;0 31.416"
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Generating Your Business Analysis
+            </h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto">
+              Our AI is analyzing your business idea "{(validation as any).businessIdea}" 
+              and creating a comprehensive validation report with market insights, competitive analysis, and strategic recommendations.
+            </p>
+            
+            <div className="space-y-4 text-left max-w-md mx-auto">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <span className="text-sm text-muted-foreground">Analyzing market opportunities...</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                <span className="text-sm text-muted-foreground">Researching competitive landscape...</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+                <span className="text-sm text-muted-foreground">Developing go-to-market strategy...</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
+                <span className="text-sm text-muted-foreground">Finalizing recommendations...</span>
+              </div>
+            </div>
+
+            <div className="mt-8 text-sm text-muted-foreground">
+              <p>Hello {leadData.firstName}! This usually takes 30-60 seconds.</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show error if analysis failed after lead capture
+  if (leadData && !isAnalysisReady && !analyzeValidationMutation.isPending) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="text-center py-12">
-            <h2 className="text-xl font-semibold text-foreground mb-4">Analysis Not Ready</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Analysis In Progress</h2>
             <p className="text-muted-foreground mb-6">
-              The AI analysis for this business validation is not yet available. Please try again in a few moments.
+              Your business analysis is being generated. This page will automatically refresh when ready.
             </p>
-            <Button onClick={handleGoBack}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
+            <div className="space-y-4">
+              <Button onClick={() => analyzeValidationMutation.mutate()} className="w-full">
+                Retry Analysis
+              </Button>
+              <Button variant="outline" onClick={handleGoBack} className="w-full">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Home
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
