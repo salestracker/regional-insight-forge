@@ -97,6 +97,21 @@ export const GatedReport = () => {
     },
   });
 
+  // Parse the analysis result early so we can use isAnalysisReady in useEffect
+  let analysis;
+  let isAnalysisReady = false;
+  if (validation) {
+    try {
+      analysis = JSON.parse((validation as any).analysisResult || "{}");
+      if (analysis.error || analysis.fallback) {
+        throw new Error("Analysis not available");
+      }
+      isAnalysisReady = true;
+    } catch (parseError) {
+      // Analysis not ready yet
+    }
+  }
+
   // Auto-refresh every 5 seconds when analysis is pending
   useEffect(() => {
     if (leadData && !isAnalysisReady) {
@@ -176,19 +191,6 @@ export const GatedReport = () => {
         </Card>
       </div>
     );
-  }
-
-  // Parse the analysis result
-  let analysis;
-  let isAnalysisReady = false;
-  try {
-    analysis = JSON.parse((validation as any).analysisResult || "{}");
-    if (analysis.error || analysis.fallback) {
-      throw new Error("Analysis not available");
-    }
-    isAnalysisReady = true;
-  } catch (parseError) {
-    // Analysis not ready yet
   }
 
   // Show beautiful loading state if lead captured but analysis not ready
