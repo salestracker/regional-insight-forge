@@ -1,17 +1,17 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { BusinessForm, BusinessFormData } from "@/components/BusinessForm";
-import { ValidationReport } from "@/components/ValidationReport";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 
-type AppState = "landing" | "form" | "report";
+type AppState = "landing" | "form";
 
 const Index = () => {
   const [currentState, setCurrentState] = useState<AppState>("landing");
-  const [formData, setFormData] = useState<BusinessFormData | null>(null);
+  const [, setLocation] = useLocation();
 
   const submitValidationMutation = useMutation({
     mutationFn: (data: BusinessFormData) => 
@@ -20,12 +20,12 @@ const Index = () => {
         body: JSON.stringify(data),
       }),
     onSuccess: (response) => {
-      setFormData(response);
-      setCurrentState("report");
       toast({
-        title: "Validation Complete",
-        description: "Your business idea has been successfully analyzed.",
+        title: "Analysis Complete",
+        description: "Your business validation is ready! Please provide your contact details to access the report.",
       });
+      // Redirect to the gated report page
+      setLocation(`/report/${response.id}`);
     },
     onError: (error) => {
       toast({
@@ -47,7 +47,6 @@ const Index = () => {
 
   const handleBackToHome = () => {
     setCurrentState("landing");
-    setFormData(null);
   };
 
   return (
@@ -65,9 +64,7 @@ const Index = () => {
         <BusinessForm onSubmit={handleFormSubmit} isLoading={submitValidationMutation.isPending} />
       )}
       
-      {currentState === "report" && formData && (
-        <ValidationReport formData={formData} />
-      )}
+
     </div>
   );
 };

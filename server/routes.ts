@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertBusinessValidationSchema } from "@shared/schema";
 import { generateValidationReport } from "./services/aiService";
+import { createHubSpotLead, type LeadData } from "./services/hubspotService";
+import { generatePDFReport } from "./services/pdfService";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -71,6 +73,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(validation);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Lead creation endpoint
+  app.post("/api/leads", async (req, res) => {
+    try {
+      const leadSchema = z.object({
+        firstName: z.string().min(1),
+        lastName: z.string().min(1),
+        email: z.string().email(),
+        company: z.string().min(1),
+        jobTitle: z.string().min(1),
+        phone: z.string().min(1),
+        country: z.string().min(1),
+        industry: z.string().min(1),
+        companySize: z.string().min(1),
+        businessGoals: z.string().optional(),
+        businessIdea: z.string().min(1),
+        source: z.string().min(1),
+      });
+
+      const leadData = leadSchema.parse(req.body);
+
+      // Create lead in HubSpot
+      const hubspotLead = await createHubSpotLead(leadData as LeadData);
+
+      res.json({
+        success: true,
+        leadId: hubspotLead.id,
+        hubspotId: hubspotLead.hubspotId,
+        message: "Lead created successfully",
+      });
+    } catch (error) {
+      console.error('Lead creation error:', error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid lead data", errors: error.errors });
+      } else {
+        res.status(500).json({ 
+          message: "Failed to create lead", 
+          error: error instanceof Error ? error.message : "Unknown error"
+        });
+      }
+    }
+  });
+
+  // PDF download endpoint
+  app.post("/api/business-validations/:id/download", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        res.status(400).json({ message: "Invalid validation ID" });
+        return;
+      }
+
+      const { leadData } = req.body;
+      if (!leadData || !leadData.firstName || !leadData.lastName) {
+        res.status(400).json({ message: "Lead data is required for PDF download" });
+        return;
+      }
+
+      const validation = await storage.getBusinessValidation(id);
+      if (!validation) {
+        res.status(404).json({ message: "Validation not found" });
+        return;
+      }
+
+      if (!validation.analysisResult) {
+        res.status(400).json({ message: "Analysis not available for this validation" });
+        return;
+      }
+
+      const analysis = JSON.parse(validation.analysisResult);
+      
+      const reportData = {
+        formData: {
+          businessIdea: validation.businessIdea,
+          targetRegion: validation.targetRegion,
+          industry: validation.industry,
+          targetAudience: validation.targetAudience,
+          budget: validation.budget,
+        },
+        analysis,
+        leadData: {
+          firstName: leadData.firstName,
+          lastName: leadData.lastName,
+          company: leadData.company,
+        },
+      };
+
+      const pdfBuffer = await generatePDFReport(reportData);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="business-validation-report-${id}.pdf"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      res.end(pdfBuffer);
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      res.status(500).json({ 
+        message: "Failed to generate PDF", 
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 

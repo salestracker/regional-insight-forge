@@ -72,24 +72,28 @@ interface ValidationReportProps {
     budget: string;
     analysisResult?: string;
   };
+  analysis?: ValidationAnalysis;
 }
 
-export const ValidationReport = ({ formData }: ValidationReportProps) => {
-  let analysis: ValidationAnalysis | null = null;
+export const ValidationReport = ({ formData, analysis: providedAnalysis }: ValidationReportProps) => {
+  let analysis: ValidationAnalysis | null = providedAnalysis || null;
   let hasError = false;
 
-  try {
-    if (formData.analysisResult) {
-      const parsed = JSON.parse(formData.analysisResult);
-      if (parsed.error || parsed.fallback) {
-        hasError = true;
-      } else {
-        analysis = parsed as ValidationAnalysis;
+  // If analysis is not provided as prop, try to parse from formData
+  if (!analysis) {
+    try {
+      if (formData.analysisResult) {
+        const parsed = JSON.parse(formData.analysisResult);
+        if (parsed.error || parsed.fallback) {
+          hasError = true;
+        } else {
+          analysis = parsed as ValidationAnalysis;
+        }
       }
+    } catch (error) {
+      console.error('Failed to parse analysis result:', error);
+      hasError = true;
     }
-  } catch (error) {
-    console.error('Failed to parse analysis result:', error);
-    hasError = true;
   }
 
   if (hasError || !analysis) {
