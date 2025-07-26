@@ -55,8 +55,6 @@ export const LeadCaptureForm = ({ onSuccess, businessIdea }: LeadCaptureFormProp
 
   const createLeadMutation = useMutation({
     mutationFn: async (data: LeadCaptureData) => {
-      console.log("Creating lead with businessIdea:", businessIdea);
-      
       if (!businessIdea || businessIdea.trim() === "") {
         throw new Error("Business idea is required but missing");
       }
@@ -66,8 +64,6 @@ export const LeadCaptureForm = ({ onSuccess, businessIdea }: LeadCaptureFormProp
         businessIdea: businessIdea.trim(),
         source: "business_validation_report",
       };
-      
-      console.log("Lead request data:", requestData);
       
       return apiRequest("/api/leads", {
         method: "POST",

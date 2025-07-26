@@ -291,10 +291,24 @@ export const GatedReport = () => {
     );
   }
 
-  // Show lead capture form first
+  // Show lead capture form first (only if validation data is loaded)
   if (!leadData) {
     const businessIdeaValue = (validation as any)?.businessIdea || "";
-    console.log("Passing businessIdea to LeadCaptureForm:", businessIdeaValue);
+    
+    // Don't show the form if businessIdea is empty (validation not loaded yet)
+    if (!businessIdeaValue || businessIdeaValue.trim() === "") {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+          <Card className="max-w-md w-full">
+            <CardContent className="text-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+              <h2 className="text-xl font-semibold text-foreground mb-2">Loading Your Business Details</h2>
+              <p className="text-muted-foreground">Please wait while we prepare your validation form...</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
