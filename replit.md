@@ -21,7 +21,13 @@ BizValidator is a comprehensive business idea validation platform that provides 
 ## Features
 1. **Landing Page**: Hero section with feature overview and call-to-action
 2. **Business Form**: Multi-step form for collecting business idea details
-3. **Validation Report**: Comprehensive analysis report with market insights
+3. **AI-Powered Validation Report**: Comprehensive analysis using DeepSeek AI including:
+   - Market opportunity analysis with region-specific insights
+   - Competitive landscape assessment
+   - Regulatory environment analysis
+   - Lean Canvas go-to-market strategy
+   - Financial projections and risk assessment
+   - Actionable next steps with no/low-code recommendations
 4. **Navigation**: Clean navigation with back button functionality
 
 ## Key Components

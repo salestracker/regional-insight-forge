@@ -188,13 +188,13 @@ export const ValidationReport = ({ formData }: ValidationReportProps) => {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
-            Market Opportunity
+            Market Opportunity Analysis
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold text-foreground mb-3">Market Segments</h4>
+              <h4 className="font-semibold text-foreground mb-3">Target Market Segments</h4>
               <div className="flex flex-wrap gap-2">
                 {analysis.marketOpportunity.segments.map((segment, index) => (
                   <Badge key={index} variant="outline" className="px-3 py-1">
@@ -215,18 +215,220 @@ export const ValidationReport = ({ formData }: ValidationReportProps) => {
             </div>
           </div>
           <Separator />
-          <p className="text-muted-foreground leading-relaxed">
-            {analysis.marketOpportunity.marketAnalysis}
-          </p>
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Market Analysis</h4>
+            <p className="text-muted-foreground leading-relaxed">
+              {analysis.marketOpportunity.marketAnalysis}
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Next Steps */}
+      {/* Competitive Landscape */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Competitive Landscape
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Competition Overview</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• {analysis.competitive.directCompetitors} direct competitors</li>
+                <li>• {analysis.competitive.indirectCompetitors} indirect competitors</li>
+                <li>• Market is {analysis.competitive.marketShare.toLowerCase()}</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Key Opportunities</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                {analysis.competitive.opportunities.map((opp, index) => (
+                  <li key={index}>• {opp}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <Separator />
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Competitive Analysis</h4>
+            <p className="text-muted-foreground leading-relaxed">
+              {analysis.competitive.competitiveAnalysis}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Regulatory Environment */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" />
+            Regulatory Environment
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Compliance Requirements</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                {analysis.regulatory.requirements.map((req, index) => (
+                  <li key={index}>• {req}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Regulatory Complexity</h4>
+              <div className="flex items-center gap-2 mb-2">
+                <div className={`h-3 w-3 rounded-full ${
+                  analysis.regulatory.complexity.toLowerCase() === 'low' ? 'bg-green-500' :
+                  analysis.regulatory.complexity.toLowerCase() === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
+                }`}></div>
+                <span className="text-foreground">{analysis.regulatory.complexity} complexity</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Estimated compliance time: {analysis.regulatory.timeToCompliance}
+              </p>
+            </div>
+          </div>
+          <Separator />
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Regulatory Analysis</h4>
+            <p className="text-muted-foreground leading-relaxed">
+              {analysis.regulatory.regulatoryAnalysis}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Go-to-Market Strategy */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Go-to-Market Strategy (Lean Canvas)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Recommended Channels</h4>
+              <div className="flex flex-wrap gap-2">
+                {analysis.goToMarket.channels.map((channel, index) => (
+                  <Badge key={index} variant="secondary" className="px-3 py-1">
+                    {channel}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Timeline</h4>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-primary" />
+                <span className="text-foreground">{analysis.goToMarket.timeline}</span>
+              </div>
+            </div>
+          </div>
+          <Separator />
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Strategy Overview</h4>
+            <p className="text-muted-foreground leading-relaxed">
+              {analysis.goToMarket.strategy}
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Key Milestones</h4>
+            <ul className="space-y-2 text-muted-foreground">
+              {analysis.goToMarket.keyMilestones.map((milestone, index) => (
+                <li key={index}>• {milestone}</li>
+              ))}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Financial Projections */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <DollarSign className="h-5 w-5 text-primary" />
+            Financial Analysis
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary mb-2">{analysis.financial.revenueProjection}</div>
+              <div className="text-sm text-muted-foreground">Revenue Projection</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-accent mb-2">{analysis.financial.breakEvenTime}</div>
+              <div className="text-sm text-muted-foreground">Break-even Time</div>
+            </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary mb-2">{analysis.financial.fundingNeeds}</div>
+              <div className="text-sm text-muted-foreground">Funding Needs</div>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold text-foreground mb-3">Key Metrics to Track</h4>
+            <div className="flex flex-wrap gap-2">
+              {analysis.financial.keyMetrics.map((metric, index) => (
+                <Badge key={index} variant="outline" className="px-3 py-1">
+                  {metric}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Risk Assessment */}
+      <Card className="shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-primary" />
+            Risk Assessment
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Primary Risks</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                {analysis.risks.primaryRisks.map((risk, index) => (
+                  <li key={index}>• {risk}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-foreground mb-3">Risk Mitigation</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                {analysis.risks.mitigation.map((mitigation, index) => (
+                  <li key={index}>• {mitigation}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="text-center p-4 bg-muted rounded-lg">
+            <div className={`text-2xl font-bold mb-2 ${
+              analysis.risks.level.toLowerCase() === 'low' ? 'text-green-600' :
+              analysis.risks.level.toLowerCase() === 'medium' ? 'text-yellow-600' : 'text-red-600'
+            }`}>
+              {analysis.risks.level} Risk Level
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Next Steps & Proof of Concept */}
       <Card className="shadow-lg border-0">
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
-            Recommended Next Steps
+            Action Plan & Proof of Concept
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

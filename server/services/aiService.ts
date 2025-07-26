@@ -55,63 +55,86 @@ export interface ValidationAnalysis {
 
 export async function generateValidationReport(formData: BusinessFormData): Promise<ValidationAnalysis> {
   const prompt = `
-You are a business validation expert. Analyze the following business idea and provide a comprehensive validation report.
+**Role & Expertise:**
+You are a seasoned business strategist and go-to-market expert specializing in launching and validating innovative business ideas globally. Your role is to analyze user-selected business concepts through comprehensive validation, crafting detailed, actionable reports tailored specifically to their chosen regions.
 
-Business Details:
-- Idea: ${formData.businessIdea}
+**Business Details to Analyze:**
+- Business Idea: ${formData.businessIdea}
 - Target Region: ${formData.targetRegion}
 - Industry: ${formData.industry}
 - Target Audience: ${formData.targetAudience}
 - Budget: ${formData.budget}
 
-Please provide a detailed analysis in JSON format with the following structure:
+**Analysis Requirements:**
+
+1. **Business Idea Validation (Comprehensive):**
+   • Market Opportunity: Evaluate market size, growth potential, target customer segments, and demand trends for ${formData.industry} in ${formData.targetRegion}
+   • Competitive Landscape: Detailed competitor analysis including strengths, weaknesses, differentiation opportunities, and threats specific to ${formData.targetRegion}
+   • Regulatory Environment: Identify region-specific regulations, compliance risks, and legal considerations for ${formData.industry} in ${formData.targetRegion}
+   • Consumer Insights: Provide insights into regional consumer behavior, buying patterns, cultural considerations, and potential market fit for ${formData.targetAudience}
+
+2. **Go-to-Market Strategy (Lean Canvas Approach):**
+   Structure recommendations following Ash Maurya's Lean Canvas methodology:
+   • Problem: Core problems addressed by "${formData.businessIdea}" in ${formData.targetRegion}
+   • Customer Segments: Precise customer segments for ${formData.targetAudience} in regional context
+   • Unique Value Proposition: Compelling differentiated value proposition for ${formData.targetRegion}
+   • Solution: Lean validated solution tailored for ${formData.targetRegion} market
+   • Channels: Optimal channels for customer acquisition in ${formData.targetRegion}
+   • Revenue Streams & Cost Structures: Monetization models specific to ${formData.targetRegion} with ${formData.budget} budget consideration
+
+3. **Proof-of-Concept Development:**
+   Provide actionable next steps for rapid prototyping using:
+   • No/Low Code Platforms: Recommend specific platforms best aligned with "${formData.businessIdea}" and ${formData.targetRegion} requirements
+   • Generative AI: Suggest optimal GenAI tools based on use case specificity and regional accessibility
+
+**Required JSON Output Format:**
 {
   "marketOpportunity": {
-    "marketSize": "estimated market size with currency",
+    "marketSize": "specific market size estimate with currency for ${formData.targetRegion}",
     "growthRate": "growth rate with percentage and timeframe",
-    "segments": ["array of 3-5 market segments"],
+    "segments": ["3-5 specific market segments for ${formData.targetAudience}"],
     "demandTrend": "High/Medium/Low",
-    "marketAnalysis": "detailed market analysis paragraph"
+    "marketAnalysis": "detailed market analysis paragraph specific to ${formData.industry} in ${formData.targetRegion}"
   },
   "competitive": {
     "directCompetitors": number_of_direct_competitors,
     "indirectCompetitors": number_of_indirect_competitors,
     "marketShare": "market concentration description",
-    "opportunities": ["array of competitive opportunities"],
-    "competitiveAnalysis": "detailed competitive landscape analysis",
-    "keyCompetitors": ["array of 3-5 key competitors"]
+    "opportunities": ["specific competitive opportunities in ${formData.targetRegion}"],
+    "competitiveAnalysis": "detailed competitive landscape analysis for ${formData.targetRegion}",
+    "keyCompetitors": ["3-5 key competitors specific to ${formData.targetRegion}"]
   },
   "regulatory": {
     "complexity": "Low/Medium/High",
-    "requirements": ["array of regulatory requirements"],
+    "requirements": ["specific regulatory requirements for ${formData.industry} in ${formData.targetRegion}"],
     "timeToCompliance": "estimated time",
-    "regulatoryAnalysis": "detailed regulatory environment analysis"
+    "regulatoryAnalysis": "detailed regulatory environment analysis for ${formData.targetRegion}"
   },
   "goToMarket": {
-    "strategy": "recommended go-to-market strategy",
-    "channels": ["array of recommended channels"],
-    "timeline": "estimated timeline",
-    "keyMilestones": ["array of key milestones"]
+    "strategy": "lean canvas-based go-to-market strategy for ${formData.targetRegion}",
+    "channels": ["optimal channels for ${formData.targetAudience} in ${formData.targetRegion}"],
+    "timeline": "realistic timeline considering ${formData.budget}",
+    "keyMilestones": ["specific milestones for ${formData.targetRegion} market entry"]
   },
   "financial": {
-    "revenueProjection": "revenue projection with timeframe",
-    "breakEvenTime": "estimated break-even time",
-    "fundingNeeds": "estimated funding requirements",
-    "keyMetrics": ["array of key financial metrics to track"]
+    "revenueProjection": "realistic revenue projection for ${formData.targetRegion} with timeframe",
+    "breakEvenTime": "estimated break-even time considering ${formData.budget}",
+    "fundingNeeds": "funding requirements beyond ${formData.budget}",
+    "keyMetrics": ["KPIs specific to ${formData.industry} in ${formData.targetRegion}"]
   },
   "risks": {
     "level": "Low/Medium/High",
-    "primaryRisks": ["array of primary risks"],
-    "mitigation": ["array of risk mitigation strategies"]
+    "primaryRisks": ["specific risks for ${formData.industry} in ${formData.targetRegion}"],
+    "mitigation": ["region-specific risk mitigation strategies"]
   },
   "validation": {
     "score": numeric_score_1_to_10,
-    "recommendation": "overall recommendation",
-    "nextSteps": ["array of recommended next steps"]
+    "recommendation": "overall professional recommendation based on comprehensive analysis",
+    "nextSteps": ["actionable next steps including no/low-code platforms and GenAI tools recommendations"]
   }
 }
 
-Be specific, realistic, and provide actionable insights. Base your analysis on the target region and industry provided.
+Provide specific, realistic, and actionable insights based on professional business validation methodologies. Focus on region-specific opportunities and challenges.
 `;
 
   try {
