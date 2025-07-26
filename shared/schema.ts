@@ -15,6 +15,7 @@ export const businessValidations = pgTable("business_validations", {
   industry: text("industry").notNull(),
   targetAudience: text("target_audience").notNull(),
   budget: text("budget").notNull(),
+  analysisResult: text("analysis_result"), // JSON string of the AI analysis
   createdAt: timestamp("created_at").defaultNow(),
 });
 

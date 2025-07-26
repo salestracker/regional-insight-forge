@@ -12,10 +12,11 @@ BizValidator is a comprehensive business idea validation platform that provides 
 - **Storage**: In-memory storage (MemStorage) as specified in guidelines
 
 ## Recent Changes
-- 2025-01-26: Migrated from React Router to Wouter for Replit compatibility
-- 2025-01-26: Installed missing dependencies (sonner, react-router-dom)
-- 2025-01-26: Updated routing system to use Wouter instead of React Router
-- 2025-01-26: Set up project structure following Replit full-stack JS guidelines
+- 2025-01-26: Integrated DeepSeek AI for dynamic business validation analysis
+- 2025-01-26: Created AI service to generate comprehensive validation reports
+- 2025-01-26: Updated backend routes to call DeepSeek API for analysis
+- 2025-01-26: Modified ValidationReport component to display AI-generated insights
+- 2025-01-26: Added proper error handling for AI analysis failures
 
 ## Features
 1. **Landing Page**: Hero section with feature overview and call-to-action

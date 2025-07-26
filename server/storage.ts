@@ -17,6 +17,7 @@ export interface IStorage {
   createBusinessValidation(validation: InsertBusinessValidation): Promise<BusinessValidation>;
   getBusinessValidation(id: number): Promise<BusinessValidation | undefined>;
   getAllBusinessValidations(): Promise<BusinessValidation[]>;
+  updateBusinessValidation(id: number, updates: Partial<BusinessValidation>): Promise<BusinessValidation | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -58,6 +59,15 @@ export class MemStorage implements IStorage {
     };
     this.businessValidations.set(id, validation);
     return validation;
+  }
+
+  async updateBusinessValidation(id: number, updates: Partial<BusinessValidation>): Promise<BusinessValidation | undefined> {
+    const existing = this.businessValidations.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { ...existing, ...updates };
+    this.businessValidations.set(id, updated);
+    return updated;
   }
 
   async getBusinessValidation(id: number): Promise<BusinessValidation | undefined> {
