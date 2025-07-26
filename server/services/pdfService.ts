@@ -312,11 +312,11 @@ export async function generatePDFReport(reportData: PDFReportData): Promise<Buff
 BUSINESS VALIDATION REPORT
 =========================
 
-Business Idea: ${validation.businessIdea}
-Target Region: ${validation.targetRegion}
-Industry: ${validation.industry}
-Target Audience: ${validation.targetAudience}
-Budget: ${validation.budget}
+Business Idea: ${businessValidation.businessIdea}
+Target Region: ${businessValidation.targetRegion}
+Industry: ${businessValidation.industry}
+Target Audience: ${businessValidation.targetAudience}
+Budget: ${businessValidation.budget}
 
 MARKET OPPORTUNITY
 ==================
