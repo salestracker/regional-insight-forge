@@ -293,12 +293,15 @@ export const GatedReport = () => {
 
   // Show lead capture form first
   if (!leadData) {
+    const businessIdeaValue = (validation as any)?.businessIdea || "";
+    console.log("Passing businessIdea to LeadCaptureForm:", businessIdeaValue);
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto">
           <LeadCaptureForm
             onSuccess={handleLeadCapture}
-            businessIdea={(validation as any).businessIdea}
+            businessIdea={businessIdeaValue}
           />
         </div>
       </div>
